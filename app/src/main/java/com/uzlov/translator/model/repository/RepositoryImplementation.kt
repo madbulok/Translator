@@ -1,4 +1,4 @@
-package geekbrains.ru.translator.model.repository
+package com.uzlov.translator.model.repository
 
 import com.uzlov.translator.model.data.WordModel
 import com.uzlov.translator.model.datasource.DataSource
