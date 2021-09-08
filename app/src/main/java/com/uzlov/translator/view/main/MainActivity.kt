@@ -5,18 +5,24 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import com.uzlov.translator.R
-
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.model.data.WordModel
-import com.uzlov.translator.presenter.Presenter
 import com.uzlov.translator.view.base.BaseActivity
-import com.uzlov.translator.view.base.View
 import com.uzlov.translator.view.main.adapter.MainAdapter
+import com.uzlov.translator.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
+import dagger.android.AndroidInjection
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : BaseActivity() {
 
-    private var adapter: MainAdapter? = null
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    lateinit var model: MainViewModel
+
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
             override fun onItemClick(data: WordModel) {
@@ -24,43 +30,41 @@ class MainActivity : BaseActivity<AppState>() {
             }
         }
 
-    private val wordAdapter by lazy {
-        MainAdapter(onListItemClickListener)
-    }
-
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl(this)
-    }
+    private val adapter: MainAdapter = MainAdapter(onListItemClickListener)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        model = viewModelFactory.create(MainViewModel::class.java)
+        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
+
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord)
+                    model.getData(searchWord)
                 }
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
+        main_activity_recyclerview.adapter = adapter
     }
+
 
     override fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                val dataModel = appState.data
-                if (dataModel == null || dataModel.isEmpty()) {
-                    showErrorScreen(getString(R.string.empty_server_response_on_success))
+                showViewWorking()
+                val data = appState.data
+                if (data == null || data.isEmpty()) {
+                    showViewError()
                 } else {
+                    adapter.setData(data)
                     showViewSuccess()
-                    if (adapter == null) {
-                        wordAdapter.setData(dataModel)
-                        main_activity_recyclerview.adapter = wordAdapter
-                    } else {
-                        adapter?.setData(dataModel)
-                    }
                 }
             }
             is AppState.Loading -> {
@@ -75,16 +79,22 @@ class MainActivity : BaseActivity<AppState>() {
                 }
             }
             is AppState.Error -> {
-                showErrorScreen(appState.error.message)
+                showViewWorking()
+                showErrorScreen(getString(R.string.error_stub))
             }
         }
+    }
+
+
+    private fun showViewWorking() {
+        loading_frame_layout.visibility = GONE
     }
 
     private fun showErrorScreen(error: String?) {
         showViewError()
         error_textview.text = error ?: getString(R.string.undefined_error)
         reload_button.setOnClickListener {
-            presenter.getData("hi")
+            model.getData("hi")
         }
     }
 

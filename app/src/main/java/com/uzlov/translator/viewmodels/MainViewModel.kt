@@ -26,30 +26,13 @@ class MainViewModel @Inject constructor(private val interactor: MainInteractor) 
             interactor.getData(word)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
-                .doOnSubscribe(doOnSubscribe())
-                .subscribeWith(getObserver())
+                .doOnSubscribe { liveDataForViewToObserve.value = AppState.Loading(null) }
+                .subscribe({ state ->
+                    appState = parseSearchResults(state)
+                    liveDataForViewToObserve.value = appState
+                }, {
+                    liveDataForViewToObserve.value = AppState.Error(it)
+                })
         )
     }
-
-    private fun doOnSubscribe(): (Disposable) -> Unit =
-        { liveDataForViewToObserve.value = AppState.Loading(null) }
-
-    private fun getObserver(): DisposableObserver<AppState> {
-        return object : DisposableObserver<AppState>() {
-
-            override fun onNext(state: AppState) {
-                appState = parseSearchResults(state)
-                liveDataForViewToObserve.value = appState
-            }
-
-            override fun onError(e: Throwable) {
-                liveDataForViewToObserve.value = AppState.Error(e)
-            }
-
-            override fun onComplete() {
-            }
-        }
-    }
-
-
 }
