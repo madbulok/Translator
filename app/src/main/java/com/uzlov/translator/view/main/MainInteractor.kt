@@ -1,13 +1,11 @@
 package com.uzlov.translator.view.main
 
-import com.uzlov.translator.presenter.Interactor
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.model.data.WordModel
-import com.uzlov.translator.model.net.AndroidNetworkStatus
 import com.uzlov.translator.model.net.INetworkStatus
 import com.uzlov.translator.model.repository.Repository
+import com.uzlov.translator.presenter.Interactor
 import io.reactivex.Observable
-import io.reactivex.Single
 
 class MainInteractor(
     private val remoteRepository: Repository<List<WordModel>>,
