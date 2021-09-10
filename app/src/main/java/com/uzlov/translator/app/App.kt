@@ -1,25 +1,20 @@
 package com.uzlov.translator.app
 
-import android.app.Activity
 import android.app.Application
-import com.uzlov.translator.di.compomemts.DaggerAppComponent
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import javax.inject.Inject
+import com.uzlov.translator.di.app
+import com.uzlov.translator.di.mainScreen
+import com.uzlov.translator.di.network
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
-class App : Application(), HasActivityInjector {
-
-    @Inject
-    lateinit var androidInjector: DispatchingAndroidInjector<Activity>
-
-    override fun activityInjector(): AndroidInjector<Activity> = androidInjector
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        DaggerAppComponent.builder()
-            .application(this)
-            .build()
-            .inject(this)
+
+        startKoin {
+            androidContext(this@App)
+            modules(listOf(app, mainScreen, network))
+        }
     }
 }
