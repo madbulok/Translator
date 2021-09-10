@@ -1,21 +1,28 @@
 package com.uzlov.translator.viewmodels
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.uzlov.translator.model.data.AppState
-import com.uzlov.translator.rx.SchedulerProvider
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
-open class BaseViewModel(
+abstract class BaseViewModel : ViewModel() {
 
-    protected val schedulerProvider: SchedulerProvider = SchedulerProvider()
-) : ViewModel() {
     protected val liveDataForViewToObserve: MutableLiveData<AppState> = MutableLiveData()
-    protected val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    open fun getData(word: String, isOnline: Boolean): LiveData<AppState> = liveDataForViewToObserve
+
+    protected val vmCoroutineScope = CoroutineScope(
+        Dispatchers.Main + SupervisorJob() + CoroutineExceptionHandler { _, throwable -> handleError(throwable) }
+    )
+
+    abstract fun handleError(throwable: Throwable)
+
+    abstract fun getData(word: String)
 
     override fun onCleared() {
-        compositeDisposable.clear()
+        cancelAllJob()
     }
+
+    abstract fun cancelAllJob()
 }
