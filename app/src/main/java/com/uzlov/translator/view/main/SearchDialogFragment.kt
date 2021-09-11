@@ -31,7 +31,15 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
     private var onSearchClickListener: OnSearchClickListener? = null
     private val vmHistoryWord: HistoryViewModel by viewModel()
 
-    private val adapter: HistoryWordAdapter = HistoryWordAdapter()
+    private val onListItemClickListener: HistoryWordAdapter.OnListItemClickListener =
+        object : HistoryWordAdapter.OnListItemClickListener {
+            override fun onItemClick(data: WordModel) {
+                searchEditText.setText(data.text)
+                onSearchClickListener?.onClick(data.text.toString())
+                dismiss()
+            }
+        }
+    private val adapter: HistoryWordAdapter = HistoryWordAdapter(onListItemClickListener)
 
     private val textWatcher = object : TextWatcher {
 
