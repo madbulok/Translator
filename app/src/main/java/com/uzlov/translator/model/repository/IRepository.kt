@@ -1,5 +1,5 @@
 package com.uzlov.translator.model.repository
 
-interface Repository<T> {
+interface IRepository<T> {
     suspend fun getData(word: String): T
 }
