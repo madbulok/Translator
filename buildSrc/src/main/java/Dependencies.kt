@@ -20,10 +20,11 @@ object Modules {
     const val repository = ":repository"
     const val utils = ":utils"
     // Features
-    const val historyScreen = ":historyScreen"
+    const val media = ":media"
 }
 
 object Versions {
+    const val play_core = "1.6.3"
     // Tools
     const val multidex = "1.0.3"
 
@@ -56,6 +57,9 @@ object Versions {
     const val runtime = "2.2.0-alpha01"
     const val roomCompiler = "2.2.0-alpha01"
 
+    //ExoPlayer
+    const val exoPlayer = "2.15.0"
+
     // Test
     const val jUnit = "4.12"
     const val runner = "1.2.0"
@@ -64,6 +68,16 @@ object Versions {
 
 object Tools {
     const val multidex = "com.android.support:multidex:${Versions.multidex}"
+}
+
+object PlayMarket {
+    const val play_core = "com.google.android.play:core:${Versions.play_core}"
+}
+
+object ExoPlayer {
+    const val exoplayer_core = "com.google.android.exoplayer:exoplayer-core:${Versions.exoPlayer}"
+    const val exoplayer_dash = "com.google.android.exoplayer:exoplayer-dash:${Versions.exoPlayer}"
+    const val exoplayer_ui = "com.google.android.exoplayer:exoplayer-ui:${Versions.exoPlayer}"
 }
 
 object Design {
