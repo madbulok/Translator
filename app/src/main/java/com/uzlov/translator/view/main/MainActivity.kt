@@ -3,8 +3,14 @@ package com.uzlov.translator.view.main
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import com.uzlov.translator.R
 import androidx.lifecycle.Observer
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.play.core.splitinstall.SplitInstallManager
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.model.data.WordModel
 import com.uzlov.translator.view.main.adapter.MainAdapter
@@ -12,17 +18,59 @@ import com.uzlov.translator.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
+private const val MODULES_KOIN_PATH = "com.uzlov.translator.media.ui.DetailWordDialogFragment"
+private const val MEDIA_FEATURE_NAME = "detailScreen"
+
 class MainActivity : com.uzlov.translator.core.BaseActivity() {
+
+    private var splitInstallManager: SplitInstallManager? = null
 
     private val model: MainViewModel by viewModel()
 
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
             override fun onItemClick(data: WordModel) {
-                val detailDialogFragment = DetailWordDialogFragment.newInstance(data)
-                detailDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_DETAIL_FRAGMENT_DIALOG_TAG)
+                startFeature(data)
             }
         }
+
+    private fun startFeature(data: WordModel) {
+        splitInstallManager = SplitInstallManagerFactory.create(applicationContext)
+        val request =
+            SplitInstallRequest
+                .newBuilder()
+                .addModule(MEDIA_FEATURE_NAME)
+                .build()
+
+        splitInstallManager?.let { mng ->
+            mng.startInstall(request)
+                .addOnSuccessListener {
+                    val detailDialogFragment = instantiateFragment(MODULES_KOIN_PATH, data)
+                    detailDialogFragment?.show(
+                        supportFragmentManager,
+                        BOTTOM_SHEET_DETAIL_FRAGMENT_DIALOG_TAG
+                    )
+                }
+                .addOnFailureListener {
+                    Toast.makeText(
+                        applicationContext,
+                        "Couldn't download feature: " + it.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+        }
+    }
+
+    private fun instantiateFragment(
+        className: String,
+        data: WordModel
+    ): BottomSheetDialogFragment? = try {
+        (Class.forName(className).newInstance() as BottomSheetDialogFragment).apply {
+            arguments = bundleOf("word_key" to data)
+        }
+    } catch (e: Exception) {
+        null
+    }
 
     private val adapter: MainAdapter = MainAdapter(onListItemClickListener)
 
