@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
-class WordModel(
+data class WordModel(
     @field:SerializedName("text") val text: String?,
     @field:SerializedName("meanings") val meanings: List<Meanings>?
 ) : Serializable
