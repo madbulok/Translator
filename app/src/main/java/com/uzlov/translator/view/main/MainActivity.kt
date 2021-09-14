@@ -6,22 +6,18 @@ import android.view.View.VISIBLE
 import android.widget.Toast
 import com.uzlov.translator.R
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.model.data.WordModel
 import com.uzlov.translator.view.base.BaseActivity
 import com.uzlov.translator.view.main.adapter.MainAdapter
 import com.uzlov.translator.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import javax.inject.Inject
-import dagger.android.AndroidInjection
+
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity() {
 
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    lateinit var model: MainViewModel
+    private val model: MainViewModel by viewModel()
 
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
@@ -33,12 +29,9 @@ class MainActivity : BaseActivity() {
     private val adapter: MainAdapter = MainAdapter(onListItemClickListener)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        model = viewModelFactory.create(MainViewModel::class.java)
         model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
 
         search_fab.setOnClickListener {

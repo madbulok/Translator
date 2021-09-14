@@ -1,7 +1,10 @@
 package com.uzlov.translator.model.net
 
-import io.reactivex.Single
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+
 
 interface INetworkStatus {
-    fun isOnlineSingle(): Single<Boolean>
+    fun observeSateNetwork(): LiveData<Boolean>
+    fun removeObserve(owner: LifecycleOwner)
 }
