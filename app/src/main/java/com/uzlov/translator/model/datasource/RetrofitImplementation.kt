@@ -5,7 +5,7 @@ import com.uzlov.translator.model.data.WordModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitImplementation : DataSource<List<WordModel>> {
+class RetrofitImplementation : IDataSource<List<WordModel>> {
 
     override suspend fun getData(word: String): List<WordModel> {
         return getService().search(word).await()
