@@ -29,7 +29,18 @@
         android:id="@+id/tvTranslateWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="@tools:sample/lorem/random"
+        tools:text="@tools:sample/lorem"
         app:layout_constraintStart_toStartOf="@+id/tvWord"
         app:layout_constraintTop_toBottomOf="@+id/tvWord" />
+
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/player_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:show_buffering="when_playing"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTranslateWord"
+        app:show_shuffle_button="true"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

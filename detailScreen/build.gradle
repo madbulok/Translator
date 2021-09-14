@@ -1,5 +1,7 @@
 plugins {
     id 'com.android.dynamic-feature'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
 }
 
 android {
@@ -11,13 +13,29 @@ android {
         versionCode Releases.version_code
         versionName Releases.version_name
     }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    compileOptions {
+        sourceCompatibility Config.java_version
+        targetCompatibility Config.java_version
+    }
 }
 
 dependencies {
-    implementation project(Modules.app)
 
+    implementation project(Modules.app)
+    implementation project(Modules.core)
     implementation project(Modules.model)
     implementation project(Modules.utils)
+    implementation project(Modules.repository)
 
     implementation Design.appcompat
 
@@ -27,7 +45,14 @@ dependencies {
     implementation Kotlin.coroutines_core
     implementation Kotlin.coroutines_android
 
+    // Koin
     implementation Koin.koin_android
+
+    //Design
+    implementation Design.material
+
+    // Coil
+    implementation Coil.coil
 
     // ExoPlayer
     implementation ExoPlayer.exoplayer_core

@@ -3,11 +3,11 @@ package com.uzlov.translator.media.player
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 
-class SoundPlayerImpl(val player: SimpleExoPlayer) : ISoundPlayer<String> {
+class SoundPlayerImpl(private val player: SimpleExoPlayer) : ISoundPlayer<SimpleExoPlayer> {
 
     //source - URL
     override fun play(source: String) {
-        val mediaItem = MediaItem.fromUri(source)
+        val mediaItem = MediaItem.fromUri("https:${source}")
         player.setMediaItem(mediaItem)
         player.prepare()
         player.play()
@@ -16,4 +16,6 @@ class SoundPlayerImpl(val player: SimpleExoPlayer) : ISoundPlayer<String> {
     override fun releasePlayer() {
         player.release()
     }
+
+    override fun getPlayer(): SimpleExoPlayer  = player
 }
