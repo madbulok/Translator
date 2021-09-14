@@ -35,6 +35,7 @@ android {
     }
 
 
+    dynamicFeatures = [':detailScreen']
 }
 
 
@@ -76,6 +77,10 @@ dependencies {
 
     // Coil
     implementation Coil.coil
+
+    // Play Core
+    implementation PlayMarket.play_core
+
     // Test
     testImplementation TestImpl.junit
     androidTestImplementation TestImpl.runner
