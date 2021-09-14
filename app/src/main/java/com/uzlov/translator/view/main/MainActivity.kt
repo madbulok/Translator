@@ -3,7 +3,6 @@ package com.uzlov.translator.view.main
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import com.uzlov.translator.R
 import androidx.lifecycle.Observer
 import com.uzlov.translator.model.data.AppState
@@ -22,7 +21,8 @@ class MainActivity : BaseActivity() {
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
             override fun onItemClick(data: WordModel) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+                val detailDialogFragment = DetailWordDialogFragment.newInstance(data)
+                detailDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_DETAIL_FRAGMENT_DIALOG_TAG)
             }
         }
 
@@ -44,6 +44,7 @@ class MainActivity : BaseActivity() {
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
+
         main_activity_recyclerview.adapter = adapter
     }
 
@@ -112,5 +113,8 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
+
+        private const val BOTTOM_SHEET_DETAIL_FRAGMENT_DIALOG_TAG =
+            "cbf5fgt0-ab6b-46bf-5d62-74a54328-413562"
     }
 }

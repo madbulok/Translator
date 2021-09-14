@@ -1,10 +1,10 @@
 package com.uzlov.translator.model.repository
 
 import com.uzlov.translator.model.data.WordModel
-import com.uzlov.translator.model.datasource.DataSource
+import com.uzlov.translator.model.datasource.IDataSource
 
-class RepositoryImplementation(private val dataSource: DataSource<List<WordModel>>) :
-    Repository<List<WordModel>> {
+class RemoteRepositoryImplementation(private val dataSource: IDataSource<List<WordModel>>) :
+    IRepository<List<WordModel>> {
 
     override suspend fun getData(word: String): List<WordModel> {
         return dataSource.getData(word)
