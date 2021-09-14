@@ -3,15 +3,15 @@ package com.uzlov.translator.viewmodels
 import androidx.lifecycle.LiveData
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.presenter.IHistoryInteractor
-import com.uzlov.translator.room.HistoryEntity
-import com.uzlov.translator.utils.mapHistoryEntityToSearchResult
+import com.uzlov.translator.repository.room.HistoryEntity
+import com.uzlov.translator.repository.mapHistoryEntityToSearchResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HistoryViewModel(private val historyInteractor: IHistoryInteractor<List<HistoryEntity>>) :
-    BaseViewModel() {
+    com.uzlov.translator.core.viewmodel.BaseViewModel() {
 
 
     fun subscribe(): LiveData<AppState> {

@@ -38,8 +38,8 @@ class DetailWordDialogFragment : BottomSheetDialogFragment() {
     private fun showResult(word: WordModel) {
         tvWord.text = word.text
         if (!word.meanings.isNullOrEmpty()){
-            tvTranslateWord.text = word.meanings.first().translation?.translation
-            ivPictureWord.load("https:${word.meanings.first().imageUrl}")
+            tvTranslateWord.text = word.meanings?.first()?.translation?.translation
+            ivPictureWord.load("https:${word.meanings?.first()?.imageUrl}")
         }
 
     }

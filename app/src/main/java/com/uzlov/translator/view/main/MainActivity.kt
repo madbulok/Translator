@@ -7,14 +7,12 @@ import com.uzlov.translator.R
 import androidx.lifecycle.Observer
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.model.data.WordModel
-import com.uzlov.translator.view.base.BaseActivity
 import com.uzlov.translator.view.main.adapter.MainAdapter
 import com.uzlov.translator.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity() {
+class MainActivity : com.uzlov.translator.core.BaseActivity() {
 
     private val model: MainViewModel by viewModel()
 
@@ -66,7 +64,7 @@ class MainActivity : BaseActivity() {
                 if (appState.progress != null) {
                     progress_bar_horizontal.visibility = VISIBLE
                     progress_bar_round.visibility = GONE
-                    progress_bar_horizontal.progress = appState.progress
+                    progress_bar_horizontal.progress = appState.progress ?: 0
                 } else {
                     progress_bar_horizontal.visibility = GONE
                     progress_bar_round.visibility = VISIBLE
