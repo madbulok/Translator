@@ -14,13 +14,14 @@ import com.uzlov.translator.media.di.injectMediaPlayers
 import com.uzlov.translator.media.player.ISoundPlayer
 import com.uzlov.translator.model.data.WordModel
 import kotlinx.android.synthetic.main.detail_word_fragment_layout.*
-import org.koin.android.ext.android.get
+import org.koin.android.scope.currentScope
 
-class DetailWordDialogFragment : BottomSheetDialogFragment() {
+class DetailWordDialogFragment : BottomSheetDialogFragment()  {
 
-    private val player: ISoundPlayer<SimpleExoPlayer> by lazy {
-        get<ISoundPlayer<SimpleExoPlayer>>()
+    init {
+        injectMediaPlayers()
     }
+    private val player: ISoundPlayer<SimpleExoPlayer> =  currentScope.get<ISoundPlayer<SimpleExoPlayer>>()
 
     private var disposableLoadImage: Disposable? = null
 
@@ -34,7 +35,6 @@ class DetailWordDialogFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectMediaPlayers()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
