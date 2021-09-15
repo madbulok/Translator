@@ -103,6 +103,7 @@ object Retrofit {
 object Koin {
     const val koin_android = "org.koin:koin-android:${Versions.koinAndroid}"
     const val koin_view_model = "org.koin:koin-android-viewmodel:${Versions.koinViewModel}"
+    const val koin_scope = "org.koin:koin-android-scope:${Versions.koinViewModel}"
 }
 
 object Coil {

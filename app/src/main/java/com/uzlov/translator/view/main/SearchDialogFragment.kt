@@ -3,33 +3,30 @@ package com.uzlov.translator.view.main
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.uzlov.translator.R
-import com.uzlov.translator.di.app
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.model.data.WordModel
+import com.uzlov.translator.utils.viewById
 import com.uzlov.translator.view.main.adapter.HistoryWordAdapter
-import com.uzlov.translator.view.main.adapter.MainAdapter
 import com.uzlov.translator.viewmodels.HistoryViewModel
-import kotlinx.android.synthetic.main.search_dialog_fragment.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.scope.currentScope
 
 class SearchDialogFragment : BottomSheetDialogFragment() {
 
-    private lateinit var searchEditText: TextInputEditText
-    private lateinit var searchButton: TextView
-    private lateinit var rvHistory: RecyclerView
+    private val searchEditText by viewById<TextInputEditText>(R.id.search_edit_text)
+    private val searchButton by viewById<TextView>(R.id.search_button_textview)
+    private val rvHistory by viewById<RecyclerView>(R.id.rwHistoryWord)
+
     private var onSearchClickListener: OnSearchClickListener? = null
-    private val vmHistoryWord: HistoryViewModel by viewModel()
+    private val vmHistoryWord: HistoryViewModel by currentScope.inject<HistoryViewModel>()
 
     private val onListItemClickListener: HistoryWordAdapter.OnListItemClickListener =
         object : HistoryWordAdapter.OnListItemClickListener {
@@ -73,9 +70,6 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchEditText = search_edit_text
-        searchButton = search_button_textview
-        rvHistory = rwHistoryWord
 
         searchButton.setOnClickListener(onSearchButtonClickListener)
         searchEditText.addTextChangedListener(textWatcher)

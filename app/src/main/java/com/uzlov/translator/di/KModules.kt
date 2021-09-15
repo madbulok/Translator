@@ -50,21 +50,25 @@ val mainScreen = module {
             networkStatus = get()
         )
     }
-
-    viewModel {
-         MainViewModel(interactor = get())
+    scope(named<MainActivity>()) {
+        viewModel {
+            MainViewModel(interactor = get())
+        }
     }
 }
 
 val searchScreen = module {
 
-    factory<IHistoryInteractor<List<HistoryEntity>>> {
-        HistoryInteractorImpl(
-            localRepository = get(named(NAME_LOCAL)))
+    scope(named<SearchDialogFragment>()) {
+        factory<IHistoryInteractor<List<HistoryEntity>>> {
+            HistoryInteractorImpl(
+                localRepository = get(named(NAME_LOCAL))
+            )
+        }
 
-    }
+        viewModel {
+            HistoryViewModel(historyInteractor = get())
 
-    viewModel {
-        HistoryViewModel(historyInteractor = get())
+        }
     }
 }

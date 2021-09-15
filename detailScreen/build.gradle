@@ -47,6 +47,7 @@ dependencies {
 
     // Koin
     implementation Koin.koin_android
+    implementation Koin.koin_scope
 
     //Design
     implementation Design.material

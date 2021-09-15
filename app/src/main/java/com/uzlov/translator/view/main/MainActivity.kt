@@ -3,20 +3,22 @@ package com.uzlov.translator.view.main
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Toast
+import android.widget.*
 import androidx.core.os.bundleOf
 import com.uzlov.translator.R
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.model.data.WordModel
+import com.uzlov.translator.utils.viewById
 import com.uzlov.translator.view.main.adapter.MainAdapter
 import com.uzlov.translator.viewmodels.MainViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.scope.currentScope
 
 private const val MODULES_KOIN_PATH = "com.uzlov.translator.media.ui.DetailWordDialogFragment"
 private const val MEDIA_FEATURE_NAME = "detailScreen"
@@ -25,7 +27,17 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
 
     private var splitInstallManager: SplitInstallManager? = null
 
-    private val model: MainViewModel by viewModel()
+    private val model: MainViewModel by currentScope.inject()
+
+    private val mainActivityRecyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
+    private val errorContainer by viewById<LinearLayout>(R.id.error_linear_layout)
+    private val successContainer by viewById<FrameLayout>(R.id.success_linear_layout)
+    private val loadingContainer by viewById<FrameLayout>(R.id.loading_frame_layout)
+    private val reloadBtn by viewById<Button>(R.id.reload_button)
+    private val tvError by viewById<TextView>(R.id.error_textview)
+    private val pbLoadingStatusHorizontal by viewById<ProgressBar>(R.id.progress_bar_horizontal)
+    private val pbLoadingStatusRound by viewById<ProgressBar>(R.id.progress_bar_round)
 
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
@@ -80,7 +92,7 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
 
         model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
 
-        search_fab.setOnClickListener {
+        searchFAB.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
@@ -91,7 +103,7 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
 
-        main_activity_recyclerview.adapter = adapter
+        mainActivityRecyclerView.adapter = adapter
     }
 
 
@@ -110,12 +122,12 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
             is AppState.Loading -> {
                 showViewLoading()
                 if (appState.progress != null) {
-                    progress_bar_horizontal.visibility = VISIBLE
-                    progress_bar_round.visibility = GONE
-                    progress_bar_horizontal.progress = appState.progress ?: 0
+                    pbLoadingStatusHorizontal.visibility = VISIBLE
+                    pbLoadingStatusRound.visibility = GONE
+                    pbLoadingStatusHorizontal.progress = appState.progress ?: 0
                 } else {
-                    progress_bar_horizontal.visibility = GONE
-                    progress_bar_round.visibility = VISIBLE
+                    pbLoadingStatusHorizontal.visibility = GONE
+                    pbLoadingStatusRound.visibility = VISIBLE
                 }
             }
             is AppState.Error -> {
@@ -127,33 +139,33 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
 
 
     private fun showViewWorking() {
-        loading_frame_layout.visibility = GONE
+        loadingContainer.visibility = GONE
     }
 
     private fun showErrorScreen(error: String?) {
         showViewError()
-        error_textview.text = error ?: getString(R.string.undefined_error)
-        reload_button.setOnClickListener {
+        tvError.text = error ?: getString(R.string.undefined_error)
+        reloadBtn.setOnClickListener {
             model.getData("hi")
         }
     }
 
     private fun showViewSuccess() {
-        success_linear_layout.visibility = VISIBLE
-        loading_frame_layout.visibility = GONE
-        error_linear_layout.visibility = GONE
+        successContainer.visibility = VISIBLE
+        loadingContainer.visibility = GONE
+        errorContainer.visibility = GONE
     }
 
     private fun showViewLoading() {
-        success_linear_layout.visibility = GONE
-        loading_frame_layout.visibility = VISIBLE
-        error_linear_layout.visibility = GONE
+        successContainer.visibility = GONE
+        loadingContainer.visibility = VISIBLE
+        errorContainer.visibility = GONE
     }
 
     private fun showViewError() {
-        success_linear_layout.visibility = GONE
-        loading_frame_layout.visibility = GONE
-        error_linear_layout.visibility = VISIBLE
+        successContainer.visibility = GONE
+        loadingContainer.visibility = GONE
+        errorContainer.visibility = VISIBLE
     }
 
     companion object {
