@@ -16,7 +16,7 @@ import com.uzlov.translator.model.data.WordModel
 import com.uzlov.translator.view.main.adapter.MainAdapter
 import com.uzlov.translator.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.scope.currentScope
 
 private const val MODULES_KOIN_PATH = "com.uzlov.translator.media.ui.DetailWordDialogFragment"
 private const val MEDIA_FEATURE_NAME = "detailScreen"
@@ -25,7 +25,7 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
 
     private var splitInstallManager: SplitInstallManager? = null
 
-    private val model: MainViewModel by viewModel()
+    private val model: MainViewModel by currentScope.inject()
 
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
