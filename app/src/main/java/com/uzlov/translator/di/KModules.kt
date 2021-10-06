@@ -11,7 +11,9 @@ import com.uzlov.translator.presenter.IHistoryInteractor
 import com.uzlov.translator.repository.room.HistoryDataBase
 import com.uzlov.translator.repository.room.HistoryEntity
 import com.uzlov.translator.view.main.HistoryInteractorImpl
+import com.uzlov.translator.view.main.MainActivity
 import com.uzlov.translator.view.main.MainInteractor
+import com.uzlov.translator.view.main.SearchDialogFragment
 import com.uzlov.translator.viewmodels.HistoryViewModel
 import com.uzlov.translator.viewmodels.MainViewModel
 import org.koin.android.ext.koin.androidContext
