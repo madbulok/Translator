@@ -1,11 +1,13 @@
 package com.uzlov.translator.view.main
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
 import androidx.core.os.bundleOf
-import com.uzlov.translator.R
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -13,11 +15,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
+import com.uzlov.translator.R
 import com.uzlov.translator.model.data.AppState
 import com.uzlov.translator.model.data.WordModel
+import com.uzlov.translator.model.net.INetworkStatus
 import com.uzlov.translator.utils.viewById
 import com.uzlov.translator.view.main.adapter.MainAdapter
 import com.uzlov.translator.viewmodels.MainViewModel
+import org.koin.android.ext.android.inject
 import org.koin.android.scope.currentScope
 
 private const val MODULES_KOIN_PATH = "com.uzlov.translator.media.ui.DetailWordDialogFragment"
@@ -28,6 +33,7 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
     private var splitInstallManager: SplitInstallManager? = null
 
     private val model: MainViewModel by currentScope.inject()
+    private val networkStatus: INetworkStatus by inject<INetworkStatus>()
 
     private val mainActivityRecyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
     private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
@@ -104,8 +110,21 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
         }
 
         mainActivityRecyclerView.adapter = adapter
-    }
 
+        networkStatus.observeSateNetwork().observe(this, { isOnline ->
+            if (!isOnline) {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                    openSettingsPanel(
+                        Settings.Panel.ACTION_INTERNET_CONNECTIVITY
+                    )
+                } else {
+                    openLegacySettings(Intent.ACTION_MAIN)
+                }
+
+            }
+        })
+
+    }
 
     override fun renderData(appState: AppState) {
         when (appState) {
@@ -166,6 +185,18 @@ class MainActivity : com.uzlov.translator.core.BaseActivity() {
         successContainer.visibility = GONE
         loadingContainer.visibility = GONE
         errorContainer.visibility = VISIBLE
+    }
+
+    private fun openSettingsPanel(panel: String) {
+        val panelIntent = Intent(panel)
+        startActivity(panelIntent)
+    }
+
+    private fun openLegacySettings(actionMain: String) {
+        val intent = Intent(actionMain).apply {
+            setClassName("com.android.phone", "com.android.phone.NetworkSetting")
+        }
+        startActivity(intent)
     }
 
     companion object {

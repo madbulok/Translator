@@ -27,7 +27,14 @@ private fun parseResult(dataModel: WordModel, newDataModels: ArrayList<WordModel
         val newMeanings = arrayListOf<Meanings>()
         for (meaning in dataModel.meanings ?: emptyList()) {
             if (meaning.translation != null && !meaning.translation?.translation.isNullOrBlank()) {
-                newMeanings.add(Meanings(meaning.translation, meaning.imageUrl))
+                newMeanings.add(
+                    Meanings(
+                        translation = meaning.translation,
+                        imageUrl = meaning.imageUrl,
+                        transcription = meaning.transcription,
+                        soundUrl = meaning.soundUrl
+                    )
+                )
             }
         }
         if (newMeanings.isNotEmpty()) {
